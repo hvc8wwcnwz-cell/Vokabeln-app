@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vokabeln Upgrade</title>
+<style>
+:root{--green:#67b63f;--dark:#163312;--soft:#eefbea;--white:#fff;--red:#e74c3c;--yellow:#ffd45a}
+*{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:linear-gradient(180deg,#e9ffe0,#fff);color:var(--dark);min-height:100vh}
+.app{max-width:520px;margin:0 auto;padding:22px 18px 90px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+h1{font-size:34px;line-height:.95;margin:0;font-weight:900}.pill{background:white;border-radius:999px;padding:10px 16px;box-shadow:0 8px 20px #0001;font-weight:800}
+.card{background:white;border-radius:28px;padding:22px;box-shadow:0 18px 40px #2e63251f;margin:14px 0;text-align:center}
+.big{font-size:42px;font-weight:900;margin:10px 0}.sub{font-size:18px;color:#466244}.emoji{font-size:52px;margin:8px 0}
+button{width:100%;border:0;border-radius:20px;padding:17px 18px;margin:8px 0;font-size:20px;font-weight:900;background:var(--green);color:white;box-shadow:0 8px 0 #3d7d27}
+button:active{transform:translateY(4px);box-shadow:0 4px 0 #3d7d27}.secondary{background:white;color:var(--dark);border:2px solid #d9efd2;box-shadow:0 8px 0 #c8dfc1}.danger{background:#ff7675;box-shadow:0 8px 0 #c84e4d}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.answer{font-size:19px}.hidden{display:none}
+.progress{height:14px;background:#dff0d8;border-radius:999px;overflow:hidden;margin:15px 0}.bar{height:100%;width:0;background:var(--green);transition:.25s}
+.feedback{font-size:24px;font-weight:900;min-height:34px;margin:12px}.small{font-size:14px;color:#5f7358;line-height:1.4}
+.tabs{display:flex;gap:8px;position:fixed;bottom:0;left:0;right:0;max-width:520px;margin:auto;background:#ffffffdd;backdrop-filter:blur(14px);padding:10px 12px env(safe-area-inset-bottom)}
+.tabs button{font-size:15px;padding:12px 6px;border-radius:15px;margin:0;box-shadow:none}.tabs .secondary{border:0;background:#eef7ea}
+.unit{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.unit button{font-size:15px;padding:13px 4px;border-radius:15px;box-shadow:none;margin:0}.selected{outline:4px solid var(--yellow)}
+.badge{display:inline-block;background:#fff7cf;border-radius:999px;padding:8px 12px;font-weight:900;margin:4px}.sentence{background:#f7fff3;border:2px dashed #acd99b;border-radius:18px;padding:14px;font-size:18px;text-align:left}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><h1>English<br>Adventure</h1><div class="pill">⭐ <span id="stars">0</span></div></div>
+  <section id="home" class="card">
+    <div class="emoji">🇬🇧🎮</div><div class="big">Vokabel-Quest</div><div class="sub">Unit 1–4 · Zuhause, Schule, Tagesablauf & Freizeit</div>
+    <div class="progress"><div id="homeBar" class="bar"></div></div>
+    <button onclick="startGame()">Spiel starten</button><button class="secondary" onclick="show('flash')">Karteikarten üben</button><button class="secondary" onclick="show('parent')">Eltern-Info</button>
+  </section>
+  <section id="setup" class="card hidden">
+    <h2>Welche Unit?</h2><div class="unit">
+      <button onclick="setUnit('1',this)">Unit 1<br>Zuhause</button><button onclick="setUnit('2',this)">Unit 2<br>Schule</button><button onclick="setUnit('3',this)">Unit 3<br>Tag</button><button onclick="setUnit('4',this)">Unit 4<br>Freizeit</button>
+    </div><button onclick="newQuestion()">Los!</button><button class="secondary" onclick="show('home')">Zurück</button>
+  </section>
+  <section id="quiz" class="card hidden">
+    <div class="pill">Level <span id="level">1</span> · Frage <span id="count">1</span>/10</div><div class="emoji" id="qEmoji">🏠</div><div class="sub" id="qMode">Was heißt?</div><div class="big" id="question">house</div>
+    <div id="answers" class="grid"></div><div class="feedback" id="feedback"></div><button class="secondary" onclick="speakWord()">🔊 Wort anhören</button><button class="danger" onclick="show('home')">Beenden</button>
+  </section>
+  <section id="flash" class="card hidden">
+    <h2>🃏 Karteikarten</h2><div class="sub">Tippe auf Antwort, dann nächste Karte.</div><div class="emoji" id="fEmoji">📘</div><div class="big" id="fWord">ready?</div>
+    <button onclick="nextCard()">Nächste Karte</button><button class="secondary" onclick="flipCard()">Antwort</button><button class="secondary" onclick="speakFlash()">🔊 Anhören</button><button class="secondary" onclick="show('home')">Zurück</button>
+  </section>
+  <section id="parent" class="card hidden">
+    <h2>👨‍👩‍👧 Eltern-Info</h2><p class="sentence">Das Spiel trainiert Unit 1–4: Zuhause/Familie, Schule, Tagesablauf und Freizeit/Wegbeschreibung. Punkte werden lokal auf dem Gerät gespeichert.</p>
+    <p><span class="badge">5–10 Min. täglich</span><span class="badge">viel loben</span><span class="badge">Fehler egal</span></p>
+    <button class="secondary" onclick="resetScore()">Punkte zurücksetzen</button><button onclick="show('home')">Zurück</button>
+  </section>
+</div>
+<div class="tabs"><button onclick="show('home')">🏠 Start</button><button class="secondary" onclick="show('setup')">🎮 Spiel</button><button class="secondary" onclick="show('flash')">🃏 Üben</button></div>
+<script>
+const allWords={"1":[["mother","Mutter","👩"],["father","Vater","👨"],["sister","Schwester","👧"],["brother","Bruder","👦"],["bedroom","Schlafzimmer","🛏️"],["kitchen","Küche","🍳"],["bathroom","Badezimmer","🛁"],["living room","Wohnzimmer","🛋️"],["chair","Stuhl","🪑"],["table","Tisch","🍽️"],["dog","Hund","🐶"],["house","Haus","🏠"]],"2":[["school","Schule","🏫"],["teacher","Lehrer/in","👩‍🏫"],["student","Schüler/in","🧑‍🎓"],["pencil","Bleistift","✏️"],["ruler","Lineal","📏"],["rubber","Radiergummi","🧽"],["book","Buch","📘"],["schoolbag","Schultasche","🎒"],["classroom","Klassenzimmer","🏫"],["cafeteria","Mensa","🍽️"],["uniform","Uniform","👕"],["question","Frage","❓"]],"3":[["get up","aufstehen","⏰"],["have breakfast","frühstücken","🥣"],["go to school","zur Schule gehen","🏫"],["come home","nach Hause kommen","🏠"],["do homework","Hausaufgaben machen","✍️"],["read","lesen","📖"],["practise","üben","🎷"],["tidy","aufräumen","🧹"],["always","immer","✅"],["often","oft","🔁"],["sometimes","manchmal","🤔"],["never","nie","🚫"]],"4":[["play football","Fußball spielen","⚽"],["go shopping","einkaufen gehen","🛍️"],["meet friends","Freunde treffen","👫"],["turn left","links abbiegen","⬅️"],["turn right","rechts abbiegen","➡️"],["go straight on","geradeaus gehen","⬆️"],["park","Park","🌳"],["street","Straße","🛣️"],["town","Stadt","🏙️"],["farm","Bauernhof","🚜"],["hobby","Hobby","🎮"],["free time","Freizeit","🛼"]]};
+let unit="1",current,correct,q=0,level=1,flash,showingAnswer=false;let stars=Number(localStorage.getItem("vocabStars")||0);document.getElementById("stars").textContent=stars;updateHomeBar();
+function show(id){["home","setup","quiz","flash","parent"].forEach(x=>document.getElementById(x).classList.add("hidden"));document.getElementById(id).classList.remove("hidden");if(id==="flash")nextCard()}
+function startGame(){show("setup")}function setUnit(u,btn){unit=u;document.querySelectorAll(".unit button").forEach(b=>b.classList.remove("selected"));btn.classList.add("selected")}function shuffle(a){return [...a].sort(()=>Math.random()-.5)}function pool(){return allWords[unit]}
+function newQuestion(){show("quiz");q++;if(q>10){win();return}document.getElementById("count").textContent=q;document.getElementById("level").textContent=level;document.getElementById("feedback").textContent="";current=pool()[Math.floor(Math.random()*pool().length)];const mode=Math.random()<.5?"de":"en";correct=mode==="en"?current[1]:current[0];document.getElementById("qEmoji").textContent=current[2];document.getElementById("qMode").textContent=mode==="en"?"Was heißt auf Deutsch?":"Wie heißt auf Englisch?";document.getElementById("question").textContent=mode==="en"?current[0]:current[1];let options=[correct];while(options.length<4){let w=pool()[Math.floor(Math.random()*pool().length)];let o=mode==="en"?w[1]:w[0];if(!options.includes(o))options.push(o)}document.getElementById("answers").innerHTML=shuffle(options).map(o=>`<button class="answer secondary" onclick="answer('${o.replaceAll("'","\'")}')">${o}</button>`).join("")}
+function answer(a){if(a===correct){stars+=2;level=Math.floor(stars/20)+1;save();document.getElementById("feedback").textContent="✅ Super!";setTimeout(newQuestion,700)}else{document.getElementById("feedback").textContent="❌ Fast! Richtig: "+correct;setTimeout(newQuestion,1400)}}
+function win(){document.getElementById("question").textContent="Geschafft!";document.getElementById("qMode").textContent="10 Fragen beendet";document.getElementById("answers").innerHTML='<button onclick="q=0;newQuestion()">Noch eine Runde</button><button class="secondary" onclick="show(\'home\')">Start</button>';document.getElementById("feedback").textContent="🏆 Toll gemacht!";q=0}
+function save(){localStorage.setItem("vocabStars",stars);document.getElementById("stars").textContent=stars;updateHomeBar()}function updateHomeBar(){document.getElementById("homeBar").style.width=Math.min(100,(stars%20)*5)+"%"}
+function nextCard(){const units=Object.values(allWords).flat();flash=units[Math.floor(Math.random()*units.length)];showingAnswer=false;document.getElementById("fEmoji").textContent=flash[2];document.getElementById("fWord").textContent=flash[0]}function flipCard(){if(!flash)nextCard();showingAnswer=!showingAnswer;document.getElementById("fWord").textContent=showingAnswer?flash[1]:flash[0]}
+function speak(text){try{speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text);u.lang="en-GB";u.rate=.8;speechSynthesis.speak(u)}catch(e){}}function speakWord(){speak(current?current[0]:document.getElementById("question").textContent)}function speakFlash(){speak(flash?flash[0]:"hello")}function resetScore(){stars=0;save();alert("Punkte zurückgesetzt.")}
+setUnit("1",document.querySelector(".unit button"));
+</script>
+</body>
+</html>
